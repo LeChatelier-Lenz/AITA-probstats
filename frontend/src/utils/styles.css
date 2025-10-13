@@ -1,0 +1,9 @@
+/* 代码块样式 */
+pre {
+  background-color: #f5f5f5; /* 背景颜色 */
+  padding: 1rem;
+  overflow-x: auto; /* 水平滚动条 */
+  border-radius: 4px;
+  position: relative; /* 添加相对定位 */
+}
+
