@@ -26,19 +26,21 @@ class Command(BaseCommand):
 
             for row in reader:
                 # 确保至少有四列
-                if len(row) < 4:
+                if len(row) < 5:
                     continue
 
                 question = row[0].strip()
                 answer = row[1].strip()
                 difficulty = row[2].strip() if row[2].strip() in ['easy', 'medium', 'hard'] else 'medium'
                 category = row[3].strip() if row[3].strip() else '未分类'
+                hint = row[4].strip() if row[4].strip() else '无提示内容'
 
                 exercises.append(Exercise(
                     question=question,
                     answer=answer,
                     difficulty=difficulty,
-                    category=category
+                    category=category,
+                    hint=hint
                 ))
 
         if exercises:

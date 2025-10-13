@@ -66,17 +66,43 @@ export const exerciseApi = {
   getAll: (): Promise<Exercise[]> =>
     api.get('/exercise/').then(response => response.data.results),
 
-  // 根据分类获取练习
-  getByCategory: (category: string): Promise<Exercise[]> =>
-    api.get(`/exercise/category/?category=${category}`).then(response => response.data),
+  // // 根据分类获取练习
+  // getByCategory: (category: string): Promise<Exercise[]> =>
+  //   api.get(`/exercise/category/?category=${category}`).then(response => response.data),
 
-  // 根据难度获取练习
-  getByDifficulty: (difficulty: string): Promise<Exercise[]> =>
-    api.get(`/exercise/difficulty/?difficulty=${difficulty}`).then(response => response.data),
+  // // 根据难度获取练习
+  // getByDifficulty: (difficulty: string): Promise<Exercise[]> =>
+  //   api.get(`/exercise/difficulty/?difficulty=${difficulty}`).then(response => response.data),
+
+  // 复杂查询
+  getByMultiple: (options: {
+    category?: string;
+    difficulty?: string | string[];
+    page?: number;
+  }): Promise<Exercise[]> => {
+    const params: Record<string, any> = {};
+
+    if (options.category && options.category !== '') params.category = options.category;
+
+    if (options.difficulty && options.category !== '') {
+      // 支持单个或数组
+      params.difficulty = options.difficulty;
+    }
+
+    if (options.difficulty && options.category && options.page) params.page = options.page;
+
+    return api
+      .get('/exercise/search/', { params })
+      .then(response => response.data);
+  },
 
   // 检查练习答案
   checkAnswer: (id: number, answer: string): Promise<ExerciseCheckResult> =>
-    api.post(`/exercise/${id}/check/`, { answer }).then(response => response.data),
+    api
+      .get('/exercise/check/', {
+        params: { id, answer },
+      })
+      .then(res => res.data),
 
   // 获取单个练习
   getById: (id: number): Promise<Exercise> =>

@@ -40,23 +40,18 @@ const ExerciseFeedback: React.FC = () => {
   const loadExercises = async () => {
     try {
       let exercisesData: Exercise[] = [];
-      
-      if (selectedTopic !== 'all' && selectedDifficulty !== 'all') {
-        // 这里需要后端支持同时按分类和难度筛选
-        exercisesData = await exerciseApi.getAll();
-        exercisesData = exercisesData.filter(ex => 
-          ex.category === selectedTopic && ex.difficulty === selectedDifficulty
-        );
-      } else if (selectedTopic !== 'all') {
-        exercisesData = await exerciseApi.getByCategory(selectedTopic);
-      } else if (selectedDifficulty !== 'all') {
-        exercisesData = await exerciseApi.getByDifficulty(selectedDifficulty);
+
+      if (selectedDifficulty !== 'all' || selectedTopic !== 'all'){
+        var topic = selectedTopic === 'all'?'':selectedTopic
+        var difficulty = selectedDifficulty === 'all'?'':selectedDifficulty
+
+        exercisesData = await exerciseApi.getByMultiple({category:topic,difficulty:difficulty,page:1})
       } else {
-        exercisesData = await exerciseApi.getAll();
+        exercisesData = await exerciseApi.getAll()
       }
       
       setExercises(exercisesData);
-      console.log(exercisesData); 
+      // console.log(exercisesData); 
     } catch (error) {
       console.error('加载练习失败:', error);
     }
@@ -301,7 +296,7 @@ const ExerciseFeedback: React.FC = () => {
                   {showHints[exercise.id] && (
                     <div className="feedback-message feedback-info">
                       <div className="feedback-title">提示</div>
-                      <div className="feedback-content">{exercise.hint}</div>
+                      <div className="feedback-content"><MarkdownWithLatex markdownContent={exercise.hint}/></div>
                     </div>
                   )}
                   
