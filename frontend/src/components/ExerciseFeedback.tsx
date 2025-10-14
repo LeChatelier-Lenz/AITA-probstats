@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Exercise, ExerciseCheckResult } from '../types';
 import { exerciseApi } from '../services/api';
-import { MathText } from '@/utils/MathText';
 import MarkdownWithLatex from '@/utils/MarkdownWithLatex';
 
 const ExerciseFeedback: React.FC = () => {

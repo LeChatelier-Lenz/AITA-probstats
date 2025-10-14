@@ -118,7 +118,7 @@ const CourseManagement: React.FC = () => {
           
           <div className="course-menu">
             {courses.map(course => 
-              course.chapters.map((chapter, index) => (
+              course.chapters.map((chapter) => (
                 <div key={chapter.id}>
                   <div 
                     className={`chapter-title ${expandedChapters.has(chapter.id) ? '' : 'collapsed'}`}

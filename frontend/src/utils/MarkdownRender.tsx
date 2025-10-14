@@ -1,7 +1,6 @@
-import React from 'react';
 import MarkdownIt from 'markdown-it';
 
-const MarkdownRenderer = ({ markdown }) => {
+const MarkdownRenderer = ({ markdown }: { markdown: string }) => {
   const md = new MarkdownIt();
   const renderedMarkdown = md.render(markdown);
 

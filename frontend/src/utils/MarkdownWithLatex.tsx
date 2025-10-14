@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import MarkdownIt from 'markdown-it';
 import texmath from 'markdown-it-texmath';
 // import itCopy from 'markdown-it-copy';

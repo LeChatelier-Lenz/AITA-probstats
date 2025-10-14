@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { Knowledge, Course, Chapter, Exercise, ApiResponse, ExerciseCheckResult } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL = "/api"
+// import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -62,9 +63,19 @@ export const courseApi = {
 
 // 练习相关API
 export const exerciseApi = {
-  // 获取所有练习
-  getAll: (): Promise<Exercise[]> =>
-    api.get('/exercise/').then(response => response.data.results),
+  // 获取所有练习（支持分页）
+  // 若传入 page，则从后端获取对应页并返回列表；否则取第一页
+  getAll: (page?: number): Promise<Exercise[]> =>
+    api
+      .get('/exercise/', { params: page ? { page } : {} })
+      .then(response => (response.data.results ?? response.data)),
+
+  // 获取所有练习（分页原始响应）
+  // 返回 { count, next, previous, results }，便于前端做分页控件
+  getAllPaged: (page?: number): Promise<ApiResponse<Exercise>> =>
+    api
+      .get('/exercise/', { params: page ? { page } : {} })
+      .then(response => response.data),
 
   // // 根据分类获取练习
   // getByCategory: (category: string): Promise<Exercise[]> =>
@@ -82,18 +93,22 @@ export const exerciseApi = {
   }): Promise<Exercise[]> => {
     const params: Record<string, any> = {};
 
-    if (options.category && options.category !== '') params.category = options.category;
+    if (options.category && options.category !== '') {
+      params.category = options.category;
+    }
 
-    if (options.difficulty && options.category !== '') {
+    if (options.difficulty && options.difficulty !== '') {
       // 支持单个或数组
       params.difficulty = options.difficulty;
     }
 
-    if (options.difficulty && options.category && options.page) params.page = options.page;
+    if (typeof options.page === 'number' && options.page > 0) {
+      params.page = options.page;
+    }
 
     return api
       .get('/exercise/search/', { params })
-      .then(response => response.data);
+      .then(response => (response.data.results ?? response.data));
   },
 
   // 检查练习答案

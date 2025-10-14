@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from .utils import call_deepseek_api
 from .models import Exercise
 from .serializers import ExerciseSerializer
+from .pagination import ExercisePagination
 
 
 
@@ -12,6 +13,7 @@ from .serializers import ExerciseSerializer
 class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
+    pagination_class = ExercisePagination
 
     @action(detail=False, methods=['get'], url_path='search')
     def search(self, request):
@@ -37,18 +39,11 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
         if difficulty:
             qs = qs.filter(difficulty__in=difficulty)
 
-        # 如果需要分页，这里可以处理 page（可选）
-        # 例如每页 10 条
-        if page:
-            try:
-                page = int(page)
-                page_size = 10
-                start = (page - 1) * page_size
-                end = start + page_size
-                qs = qs[start:end]
-            except ValueError:
-                return Response({"detail": "page 参数必须为整数"}, status=status.HTTP_400_BAD_REQUEST)
-
+        # 使用 DRF 分页器统一处理
+        page_obj = self.paginate_queryset(qs)
+        if page_obj is not None:
+            serializer = self.get_serializer(page_obj, many=True)
+            return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
