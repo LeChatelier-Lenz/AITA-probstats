@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Knowledge, Course, Chapter, Exercise, ApiResponse, ExerciseCheckResult } from '../types';
+import { Knowledge, Course, Chapter, Exercise, ApiResponse, ExerciseCheckResult, AuthResponse, UserProfile, UserExercises } from '../types';
 
 const API_BASE_URL = "/api"
 // import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
@@ -9,6 +9,16 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+});
+
+// 注入 Token
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    config.headers = config.headers || {};
+    (config.headers as any)['Authorization'] = `Token ${token}`;
+  }
+  return config;
 });
 
 // 知识点相关API
@@ -111,6 +121,19 @@ export const exerciseApi = {
       .then(response => (response.data.results ?? response.data));
   },
 
+  // 复杂查询（分页原始响应）
+  getByMultiplePaged: (options: {
+    category?: string;
+    difficulty?: string | string[];
+    page?: number;
+  }): Promise<ApiResponse<Exercise>> => {
+    const params: Record<string, any> = {};
+    if (options.category && options.category !== '') params.category = options.category;
+    if (options.difficulty && options.difficulty !== '') params.difficulty = options.difficulty;
+    if (typeof options.page === 'number' && options.page > 0) params.page = options.page;
+    return api.get('/exercise/search/', { params }).then(res => res.data);
+  },
+
   // 检查练习答案
   checkAnswer: (id: number, answer: string): Promise<ExerciseCheckResult> =>
     api
@@ -122,6 +145,30 @@ export const exerciseApi = {
   // 获取单个练习
   getById: (id: number): Promise<Exercise> =>
     api.get(`/exercise/${id}/`).then(response => response.data),
+};
+
+// 用户与认证相关 API
+export const authApi = {
+  login: (username: string, password: string): Promise<AuthResponse> =>
+    api.post('/users/login/', { username, password }).then(res => res.data),
+  register: (username: string, email: string, password: string): Promise<AuthResponse> =>
+    api.post('/users/register/', { username, email, password }).then(res => res.data),
+  me: (): Promise<{ user: UserProfile }> => api.get('/users/me/').then(res => res.data),
+};
+
+export const userExerciseApi = {
+  toggleLabel: (exerciseId: number): Promise<{ status: 'labeled' | 'unlabeled' }> =>
+    api.post(`/users/exercises/${exerciseId}/toggle-label/`).then(res => res.data),
+  toggleLabelWithAnalysis: (
+    exerciseId: number,
+    data: { user_answer?: string; correct_answer?: string; explanation?: string }
+  ): Promise<{ status: 'labeled' | 'unlabeled' }> =>
+    api.post(`/users/exercises/${exerciseId}/toggle-label/`, data).then(res => res.data),
+  toggleArchive: (exerciseId: number): Promise<{ status: 'archived' | 'unarchived' }> =>
+    api.post(`/users/exercises/${exerciseId}/toggle-archive/`).then(res => res.data),
+  myLists: (): Promise<UserExercises> => api.get('/users/me/exercises/').then(res => res.data),
+  myErrorReport: (): Promise<{ content: string; updated_at: string }> =>
+    api.get('/users/me/error-report/').then(res => res.data),
 };
 
 export default api;

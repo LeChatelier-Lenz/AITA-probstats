@@ -27,12 +27,29 @@ interface MarkdownWithLatexProps {
   markdownContent: string; // 添加类型注解为字符串
 }
 
+// 去除可能的 ```markdown ... ``` 或 ``` ... ``` 围栏包裹
+function stripFences(src: string): string {
+  if (!src) return '';
+  const s = src.trim();
+  if (s.startsWith('```')) {
+    const lines = s.split(/\r?\n/);
+    // 第一行可能是 ``` 或 ```markdown
+    if (lines[0].startsWith('```')) {
+      // 找到最后一个仅包含 ``` 的行
+      const lastFenceIdx = lines.lastIndexOf('```');
+      if (lastFenceIdx > 0) {
+        return lines.slice(1, lastFenceIdx).join('\n');
+      }
+    }
+  }
+  return src;
+}
+
 const MarkdownWithLatex: React.FC<MarkdownWithLatexProps> = ({ markdownContent }) => {
-    const html = md.render(markdownContent);
+    const normalized = stripFences(markdownContent);
+    const html = md.render(normalized);
   return (
-      <div
-        dangerouslySetInnerHTML={{ __html: html }}
-      />
+      <div className="markdown-body" dangerouslySetInnerHTML={{ __html: html }} />
   );
 };
 

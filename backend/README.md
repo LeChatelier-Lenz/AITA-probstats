@@ -28,7 +28,7 @@
 
 1. 进入后端目录
 ```bash
-cd ai_course_assistant_backend
+cd backend
 ```
 
 2. 创建虚拟环境
@@ -96,6 +96,17 @@ python manage.py runserver
 - `GET /api/exercise/{id}/` - 获取单个练习详情
 - `POST /api/exercise/{id}/check/` - 检查练习答案
 
+### 用户与认证 API
+
+- `POST /api/users/register/` - 注册，返回 { token, user }
+- `POST /api/users/login/` - 登录，返回 { token, user }
+- `GET /api/users/me/` - 获取当前用户信息（需要认证）
+- `GET /api/users/me/exercises/` - 获取我的标注/归档列表（需要认证）
+- `POST /api/users/exercises/{id}/toggle-label/` - 标注/取消标注（需要认证）
+- `POST /api/users/exercises/{id}/toggle-archive/` - 归档/取消归档（需要认证）
+
+认证方式：使用 DRF Token。请求头带 `Authorization: Token <token>`。
+
 ## 项目结构
 
 ```
@@ -115,6 +126,11 @@ ai_course_assistant_backend/
 │   ├── serializers.py     # 序列化器
 │   └── urls.py           # URL路由
 ├── exercises/             # 练习应用
+├── users/                 # 用户与标注/归档
+│   ├── models.py
+│   ├── views.py
+│   ├── serializers.py
+│   └── urls.py
 │   ├── models.py          # 练习数据模型
 │   ├── views.py           # API视图
 │   ├── serializers.py     # 序列化器

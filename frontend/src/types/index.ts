@@ -67,3 +67,20 @@ export interface ExerciseCheckResult {
   explanation: string;
   user_answer: string;
 }
+
+// 用户与认证
+export interface UserProfile {
+  id: number;
+  username: string;
+  email: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  user: UserProfile;
+}
+
+export interface UserExercises {
+  labeled: { exercise: Exercise; created_at: string; user_answer?: string; correct_answer?: string; explanation?: string; analysis_saved_at?: string }[];
+  archived: { exercise: Exercise; created_at: string }[];
+}

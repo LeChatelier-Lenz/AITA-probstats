@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import UserButton from './UserButton';
 import { useNavigate } from 'react-router-dom';
 import { Course, Chapter } from '../types';
 import { courseApi } from '../services/api';
@@ -80,7 +81,7 @@ const CourseManagement: React.FC = () => {
             </button>
           </div>
           <h1 className="fs-4 m-0">概率论与数理统计课程助手</h1>
-          <div>
+          <div className="d-flex align-items-center gap-2">
             <ul className="nav nav-tabs">
               <li className="nav-item">
                 <button 
@@ -99,6 +100,7 @@ const CourseManagement: React.FC = () => {
                 </button>
               </li>
             </ul>
+            <UserButton />
           </div>
         </div>
       </header>

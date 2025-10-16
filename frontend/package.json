@@ -12,6 +12,7 @@
     "katex": "^0.16.25",
     "markdown-it": "^14.1.0",
     "markdown-it-texmath": "^1.0.0",
+    "mathlive": "^0.107.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.1",
     "react-dom": "^18.2.0",

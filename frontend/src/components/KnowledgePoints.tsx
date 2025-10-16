@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import UserButton from './UserButton';
 import { useNavigate } from 'react-router-dom';
 import { Knowledge } from '../types';
 import { knowledgeApi } from '../services/api';
@@ -101,7 +102,7 @@ const KnowledgePoints: React.FC = () => {
             </button>
           </div>
           <h1 className="fs-4 m-0">概率论与数理统计课程助手</h1>
-          <div>
+          <div className="d-flex align-items-center gap-2">
             <ul className="nav nav-tabs">
               <li className="nav-item">
                 <button 
@@ -117,6 +118,7 @@ const KnowledgePoints: React.FC = () => {
                 </button>
               </li>
             </ul>
+            <UserButton />
           </div>
         </div>
       </header>

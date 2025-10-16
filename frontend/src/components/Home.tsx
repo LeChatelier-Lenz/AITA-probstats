@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import UserButton from './UserButton';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -10,9 +11,20 @@ const Home: React.FC = () => {
 
   return (
     <div className="container-fluid main-container">
-      <header className="text-center py-4">
-        <h1 className="main-title">概率论与数理统计课程助手</h1>
-        <p className="subtitle">智能学习辅助平台</p>
+      <header className="py-4">
+        <div className="d-flex justify-content-between align-items-center">
+          <div></div>
+          <div className="text-center">
+            <h1 className="main-title">概率论与数理统计课程助手</h1>
+            <p className="subtitle">智能学习辅助平台</p>
+          </div>
+          <div className="d-flex align-items-center gap-2">
+            <UserButton />
+            {localStorage.getItem('auth_token') && (
+              <button className="btn btn-outline-secondary btn-sm" onClick={() => {localStorage.removeItem('auth_token'); window.location.reload();}}>退出</button>
+            )}
+          </div>
+        </div>
       </header>
 
       <div className="row justify-content-center entrance-container">
@@ -43,7 +55,7 @@ const Home: React.FC = () => {
       </div>
 
       <footer className="text-center py-3">
-        <p>© 2023 概率论与数理统计课程助手 | 智能学习辅助平台</p>
+        <p>© 2025 概率论与数理统计课程助手 | 智能学习辅助平台</p>
       </footer>
     </div>
   );
